@@ -26,13 +26,17 @@ type Error struct {
 func (e Error) MarshalJSON() ([]byte, error) {
 	// This anon struct is needed to actually include the error string,
 	// since it wouldn't be marshaled otherwise. (json.Marshal doesn't call Err.Error())
+	errStr := ""
+	if e.Err != nil {
+		errStr = e.Err.Error()
+	}
 	return json.Marshal(
 		struct {
 			Error string `json:"error"`
 			Code  int    `json:"code"`
 			Data  any    `json:"data,omitempty"`
 		}{
-			Error: e.Err.Error(),
+			Error: errStr,
 			Code:  e.Code,
 			Data:  e.Data,
 		})
