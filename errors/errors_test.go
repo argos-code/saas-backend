@@ -1,6 +1,8 @@
 package errors
 
 import (
+	"encoding/json"
+	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -8,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+
+	qt "github.com/frankban/quicktest"
 )
 
 // TestErrorCodesAreUnique parses the current package's source files,
@@ -139,4 +143,67 @@ func keys[M ~map[K]V, K comparable, V any](m M) []K {
 		out = append(out, k)
 	}
 	return out
+}
+
+// TestMarshalJSON_BaseShape verifies that marshaled output contains "error" and "code",
+// and that HTTPstatus is never included in the JSON.
+func TestMarshalJSON_BaseShape(t *testing.T) {
+	c := qt.New(t)
+	e := Error{Err: fmt.Errorf("account not found"), Code: 4003, HTTPstatus: 404}
+	data, err := json.Marshal(e)
+	c.Assert(err, qt.IsNil)
+	var m map[string]any
+	c.Assert(json.Unmarshal(data, &m), qt.IsNil)
+	c.Assert(m["error"], qt.Equals, "account not found")
+	c.Assert(m["code"], qt.Equals, float64(4003))
+	_, hasHTTPstatus := m["HTTPstatus"]
+	c.Assert(hasHTTPstatus, qt.IsFalse)
+	_, hasHTTPstatusLower := m["httpstatus"]
+	c.Assert(hasHTTPstatusLower, qt.IsFalse)
+}
+
+// TestMarshalJSON_DataNil verifies that the "data" key is absent when Data is nil.
+func TestMarshalJSON_DataNil(t *testing.T) {
+	c := qt.New(t)
+	e := Error{Err: fmt.Errorf("not found"), Code: 4004, HTTPstatus: 404}
+	data, err := json.Marshal(e)
+	c.Assert(err, qt.IsNil)
+	var m map[string]any
+	c.Assert(json.Unmarshal(data, &m), qt.IsNil)
+	_, hasData := m["data"]
+	c.Assert(hasData, qt.IsFalse)
+}
+
+// TestMarshalJSON_NilErr verifies that MarshalJSON does not panic and returns stable output
+// when Err is nil.
+func TestMarshalJSON_NilErr(t *testing.T) {
+	c := qt.New(t)
+	e := Error{Code: 4006, HTTPstatus: 500}
+	data, err := json.Marshal(e)
+	c.Assert(err, qt.IsNil)
+	var m map[string]any
+	c.Assert(json.Unmarshal(data, &m), qt.IsNil)
+	c.Assert(m["error"], qt.Equals, "")
+	c.Assert(m["code"], qt.Equals, float64(4006))
+}
+
+// TestMarshalJSON_DataSet verifies that Data is included under the "data" key when non-nil.
+func TestMarshalJSON_DataSet(t *testing.T) {
+	c := qt.New(t)
+	e := Error{
+		Err:        fmt.Errorf("validation failed"),
+		Code:       4005,
+		HTTPstatus: 400,
+		Data:       map[string]string{"field": "email", "reason": "invalid"},
+	}
+	data, err := json.Marshal(e)
+	c.Assert(err, qt.IsNil)
+	var m map[string]any
+	c.Assert(json.Unmarshal(data, &m), qt.IsNil)
+	dataVal, hasData := m["data"]
+	c.Assert(hasData, qt.IsTrue)
+	nested, ok := dataVal.(map[string]any)
+	c.Assert(ok, qt.IsTrue)
+	c.Assert(nested["field"], qt.Equals, "email")
+	c.Assert(nested["reason"], qt.Equals, "invalid")
 }
