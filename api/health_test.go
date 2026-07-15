@@ -25,6 +25,8 @@ func TestInfoHandler(t *testing.T) {
 	var info InfoResponse
 	c.Assert(json.Unmarshal(w.Body.Bytes(), &info), qt.IsNil)
 	c.Assert(info.GoVersion, qt.Not(qt.Equals), "")
+	c.Assert(info.Commit, qt.Not(qt.Equals), "")
+	c.Assert(info.Commit, qt.HasLen, 8)
 }
 
 // TestInfoHandlerNilBuildInfo verifies the nil-guard path: when build info is unavailable,
@@ -42,4 +44,5 @@ func TestInfoHandlerNilBuildInfo(t *testing.T) {
 	c.Assert(json.Unmarshal(w.Body.Bytes(), &info), qt.IsNil)
 	c.Assert(info.Version, qt.Equals, "unknown")
 	c.Assert(info.GoVersion, qt.Equals, "unknown")
+	c.Assert(info.Commit, qt.Equals, "unknown")
 }

@@ -11,6 +11,7 @@ import (
 type InfoResponse struct {
 	Version   string `json:"version"`
 	GoVersion string `json:"goVersion"`
+	Commit    string `json:"commit"`
 	ChainID   string `json:"chainId"`
 }
 
@@ -18,6 +19,7 @@ type InfoResponse struct {
 var defaultInfoResponse = InfoResponse{
 	Version:   "unknown",
 	GoVersion: "unknown",
+	Commit:    "unknown",
 }
 
 // InfoHandler godoc
@@ -33,6 +35,15 @@ func (a *API) InfoHandler(w http.ResponseWriter, _ *http.Request) {
 	if v, _ := debug.ReadBuildInfo(); v != nil {
 		info.Version = v.Main.Version
 		info.GoVersion = v.GoVersion
+		for _, s := range v.Settings {
+			if s.Key == "vcs.revision" {
+				info.Commit = s.Value
+				if len(info.Commit) > 8 {
+					info.Commit = info.Commit[:8]
+				}
+				break
+			}
+		}
 	}
 	if a.account != nil {
 		info.ChainID = a.account.ChainID()

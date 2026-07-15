@@ -13,6 +13,8 @@ definitions:
     properties:
       chainId:
         type: string
+      commit:
+        type: string
       goVersion:
         type: string
       version:
