@@ -5,7 +5,7 @@
 <p align="center" width="100%">
     <a href="https://github.com/vocdoni/saas-backend/commits/main/"><img src="https://img.shields.io/github/commit-activity/m/vocdoni/saas-backend" /></a>
     <a href="https://github.com/vocdoni/saas-backend/issues"><img src="https://img.shields.io/github/issues/vocdoni/saas-backend" /></a>
-    <a href="https://github.com/vocdoni/saas-backend/actions/workflows/main.yml/"><img src="https://github.com/vocdoni/saas-backend/actions/workflows/main.yml/badge.svg" /></a>
+    <a href="https://github.com/argos-code/saas-backend/actions/workflows/main.yml/"><img src="https://github.com/argos-code/saas-backend/actions/workflows/main.yml/badge.svg" /></a>
     <a href="https://pkg.go.dev/github.com/vocdoni/saas-backend"><img src="https://godoc.org/go.vocdoni.io/saas-backend?status.svg"></a>
     <a href="https://discord.gg/xFTh8Np2ga"><img src="https://img.shields.io/badge/discord-join%20chat-blue.svg" /></a>
     <a href="https://twitter.com/vocdoni"><img src="https://img.shields.io/twitter/follow/vocdoni.svg?style=social&label=Follow" /></a>
