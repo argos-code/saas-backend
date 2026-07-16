@@ -187,6 +187,13 @@ func TestMarshalJSON_NilErr(t *testing.T) {
 	c.Assert(m["code"], qt.Equals, float64(4006))
 }
 
+// TestGetCode verifies that GetCode returns the Error's Code field.
+func TestGetCode(t *testing.T) {
+	c := qt.New(t)
+	e := Error{Err: fmt.Errorf("account not found"), Code: 4003, HTTPstatus: 404}
+	c.Assert(e.GetCode(), qt.Equals, 4003)
+}
+
 // TestMarshalJSON_DataSet verifies that Data is included under the "data" key when non-nil.
 func TestMarshalJSON_DataSet(t *testing.T) {
 	c := qt.New(t)

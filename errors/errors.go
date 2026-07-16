@@ -72,6 +72,11 @@ func (e Error) Unwrap() error {
 	return e.Err
 }
 
+// GetCode returns the error's Code field.
+func (e Error) GetCode() int {
+	return e.Code
+}
+
 // Is returns true if the Code matches
 func (e Error) Is(target error) bool {
 	t, ok := target.(Error)
