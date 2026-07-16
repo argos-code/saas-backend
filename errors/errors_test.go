@@ -207,3 +207,12 @@ func TestMarshalJSON_DataSet(t *testing.T) {
 	c.Assert(nested["field"], qt.Equals, "email")
 	c.Assert(nested["reason"], qt.Equals, "invalid")
 }
+
+// TestIsCode verifies that IsCode reports whether the error carries the given code.
+func TestIsCode(t *testing.T) {
+	c := qt.New(t)
+	e := Error{Err: fmt.Errorf("account not found"), Code: 4003}
+	c.Assert(e.IsCode(4003), qt.IsTrue)
+	c.Assert(e.IsCode(4004), qt.IsFalse)
+	c.Assert(Error{}.IsCode(0), qt.IsTrue)
+}

@@ -39,7 +39,8 @@ func (e Error) MarshalJSON() ([]byte, error) {
 			Error: errStr,
 			Code:  e.Code,
 			Data:  e.Data,
-		})
+		},
+	)
 }
 
 // UnmarshalJSON parses a JSON containing error, code and optionally data.
@@ -83,6 +84,11 @@ func (e Error) Is(target error) bool {
 		t = *tp
 	}
 	return e.Code == t.Code
+}
+
+// IsCode returns true if the error's Code matches the given code.
+func (e Error) IsCode(code int) bool {
+	return e.Code == code
 }
 
 // Write serializes a JSON msg using Error.Err and Error.Code
