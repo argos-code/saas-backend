@@ -72,6 +72,18 @@ func (e Error) Unwrap() error {
 	return e.Err
 }
 
+// String returns a concise "code: message" representation of the error,
+// satisfying fmt.Stringer.
+//
+// Example output: "4003: account not found"
+func (e Error) String() string {
+	errStr := ""
+	if e.Err != nil {
+		errStr = e.Err.Error()
+	}
+	return fmt.Sprintf("%d: %s", e.Code, errStr)
+}
+
 // Is returns true if the Code matches
 func (e Error) Is(target error) bool {
 	t, ok := target.(Error)

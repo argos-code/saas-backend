@@ -207,3 +207,18 @@ func TestMarshalJSON_DataSet(t *testing.T) {
 	c.Assert(nested["field"], qt.Equals, "email")
 	c.Assert(nested["reason"], qt.Equals, "invalid")
 }
+
+// TestString_WithErr verifies String() returns a "code: message" representation.
+func TestString_WithErr(t *testing.T) {
+	c := qt.New(t)
+	e := Error{Err: fmt.Errorf("account not found"), Code: 4003, HTTPstatus: 404}
+	c.Assert(e.String(), qt.Equals, "4003: account not found")
+}
+
+// TestString_NilErr verifies String() does not panic and returns a stable
+// output when Err is nil.
+func TestString_NilErr(t *testing.T) {
+	c := qt.New(t)
+	e := Error{Code: 4006, HTTPstatus: 500}
+	c.Assert(e.String(), qt.Equals, "4006: ")
+}
